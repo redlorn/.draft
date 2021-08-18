@@ -78,10 +78,10 @@ fn celsius_to_fahrenheit() {
 
 fn fibonacci(n: u32) -> u32 {
     if n < 2 {
-        return n;
+       n
+    } else {
+        fibonacci(n - 2) + fibonacci(n - 1)
     }
-
-    fibonacci(n - 2) + fibonacci(n - 1)
 }
 
 fn fibonacci_number() {
