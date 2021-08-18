@@ -81,12 +81,7 @@ fn fibonacci(n: u32) -> u32 {
         return n;
     }
 
-    let mut f :u32 = 0;
-    for i in 2..n+1 {
-        f = fibonacci(i - 2) + fibonacci(i - 1);
-    }
-
-    f
+    fibonacci(n - 2) + fibonacci(n - 1)
 }
 
 fn fibonacci_number() {
