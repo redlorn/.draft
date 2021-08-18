@@ -26,7 +26,7 @@ fn main() {
     }
 }
 
-fn menu() -> i32 {
+fn menu() -> u32 {
     const MENU :[&str; 4] = [
         "Convert from Fahrenheit to Celsius",
         "Convert from Celsius to Fahrenheit",
@@ -46,7 +46,7 @@ fn menu() -> i32 {
         Err(_) => return 0
     };
 
-    let option :i32 = match option.trim().parse() {
+    let option :u32 = match option.trim().parse() {
         Ok(num) => num,
         Err(_) => 0,
     };
@@ -56,29 +56,28 @@ fn menu() -> i32 {
 
 fn fahrenheit_to_celsius() {
     println!("Temperature (F): ");
-
-    let mut fahrenheit = String::new();
-    io::stdin().read_line(&mut fahrenheit).expect("Invalid temperature");
-    let fahrenheit :f64 = fahrenheit.trim().parse().expect("Invalid temperature");
-
+    let fahrenheit = read_f64();
     let celsius :f64 = (fahrenheit - 32.0) * (5.0/9.0);
     println!("{} C", celsius);
 }
 
 fn celsius_to_fahrenheit() {
     println!("Temperature (C): ");
-
-    let mut celsius = String::new();
-    io::stdin().read_line(&mut celsius).expect("Invalid temperature");
-    let celsius :f64 = celsius.trim().parse().expect("Invalid temperature");
-
+    let celsius = read_f64();
     let fahrenheit :f64 = celsius * (9.0/5.0) + 32.0;
     println!("{} F", fahrenheit);
 }
 
+fn read_f64() -> f64 {
+    let mut n = String::new();
+    io::stdin().read_line(&mut n).expect("Invalid float");
+    let n :f64 = n.trim().parse().expect("Invalid float");
+    n
+}
+
 fn fibonacci(n: u32) -> u32 {
     if n < 2 {
-       n
+        n
     } else {
         fibonacci(n - 2) + fibonacci(n - 1)
     }
@@ -86,16 +85,19 @@ fn fibonacci(n: u32) -> u32 {
 
 fn fibonacci_number() {
     println!("Fibonacci #: ");
-
-    let mut n = String::new();
-    io::stdin().read_line(&mut n).expect("Invalid number");
-    let n :u32 = n.trim().parse().expect("Invalid number");
-
+    let n = read_u32();
     let fibonacci = fibonacci(n);
     println!("{}", fibonacci);
 }
 
-fn day_of_christmas(day: i32) -> String {
+fn read_u32() -> u32 {
+    let mut n = String::new();
+    io::stdin().read_line(&mut n).expect("Invalid number");
+    let n :u32 = n.trim().parse().expect("Invalid number");
+    n
+}
+
+fn day_of_christmas(day: u32) -> String {
     const GIFTS :[&str; 12] = [
         "And a partridge in a pear tree.",
         "Two turtle doves,",
@@ -121,9 +123,7 @@ fn day_of_christmas(day: i32) -> String {
 fn sing_days_of_christmas() {
     println!("Which day? ");
 
-    let mut day = String::new();
-    io::stdin().read_line(&mut day).expect("Invalid day");
-    let day :i32 = day.trim().parse().expect("Invalid day");
+    let day :u32 = read_u32();
 
     if day < 1 || day > 12 {
         println!("Not one of the twelve days of Christmas");
@@ -145,8 +145,8 @@ fn sing_days_of_christmas() {
     }
 }
 
-fn number_name(n :i32) -> String {
-    const NUMS :[&str;12] = [
+fn number_name(n :u32) -> String {
+    const NUMS :[&str; 12] = [
         "First",
         "Second",
         "Third",
