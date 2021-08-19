@@ -75,9 +75,9 @@ fn read_f64() -> f64 {
     n
 }
 
-fn fibonacci(n: u32) -> u32 {
+fn fibonacci(n: u32) -> u128 {
     if n < 2 {
-        n
+        n as u128
     } else {
         fibonacci(n - 2) + fibonacci(n - 1)
     }
@@ -145,7 +145,7 @@ fn sing_days_of_christmas() {
     }
 }
 
-fn number_name(n :u32) -> String {
+fn number_name(n :u32) -> &'static str {
     const NUMS :[&str; 12] = [
         "First",
         "Second",
@@ -165,5 +165,5 @@ fn number_name(n :u32) -> String {
         panic!("No name for number");
     }
 
-    NUMS[n as usize - 1].to_string()
+    NUMS[n as usize - 1]
 }
