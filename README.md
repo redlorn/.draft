@@ -1,4 +1,4 @@
-Copyright 2021 Roy Laurie
+Copyright 2021 redlorn
 
 All rights are reserved.
 
