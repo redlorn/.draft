@@ -1,0 +1,6 @@
+files
+images
+music
+projects
+sounds
+videos

@@ -1,68 +1,55 @@
 #!/bin/bash
-# Performs first time creation of user profile storage.
+set -o errexit -o pipefail -o privileged -o nounset
+shopt -s extglob
 
-set -oue pipefail
-IFS=$'\n\t'
+declare -r OPWD="$PWD"
 
-echo "tote: Creating tote store ..."
+trap_exit () {
+    cd "$OPWD"
+}
 
-username="$(whoami)"
-if [ ! $(git config --global user.name) ]; then
-    git config --global user.name "$username"
-    git config --global user.email "$username@localhost"
-fi
+trap 'trap_exit' EXIT
 
+main () {
+    local TOTE_PATH FILESYSTEMS_PATH REPOSITORIES_PATH
+    TOTE_PATH="$(realpath "$1")"
+    FILESYSTEMS_PATH="$(realpath "$TOTE_PATH/filesystems")"
+    REPOSITORIES_PATH="$(realpath "$TOTE_PATH/repositories")"
 
-storedir="$HOME/store"
-datadirs=(audio document image note profile project)
-profiledirs=(copy include link link/bin)
+    local -a filesystems repositories
+    mapfile -rta filesystems <<< tote.filesystems.txt
+    mapfile -rta repositories <<< tote.repositories.txt
 
-# create storedir. backup existing if necessary.
-if [ -d $storedir ]; then
-    if [ -d $storedir/encrypted ]; then
-        r=$(umount $storedir/encrypted)
-    fi
-    oldstoredir="$storedir.old.$(date +%s)"
-    mv $storedir $oldstoredir
-fi
+    cd $TOTE_PATH
+    mkdir "$FILESYSTEMS_PATH" "$REPOSITORIES_PATH"
 
-mkdir -p $storedir
+    for filesystem in "${filesystems[@]}" ; do
+        local filesystemPath
+        filesystemPath="$FILESYSTEMS_PATH/$filesystem"
+        encfs --paranoia "$filesystemPath.encfs" "$filesystemPath"
+        fusermount -u "$filesystemPath"
+        rmdir "$filesystemPath"
+    done
 
-# make datadirs within the store directory
-cd $storedir
-mkdir -p ${datadirs[*]}
-cd $storedir/profile
-mkdir -p ${profiledirs[*]}
+    for repository in "${repositories[@]}" ; do
+        local repositoryPath
+        repositoryPath="$REPOSITORIES_PATH/$repository"
+        encfs --paranoia "$repositoryPath.encfs" "$repositoryPath"
 
-# git init the store/profile/link/bin
-cd $storedir/profile/link/bin
-git init . 1>/dev/null
-touch .gitignore
-git add .
-git commit -m 'init' 1>/dev/null
+        local -r opwd="$PWD"
+        cd "$repositoryPath"
 
-# create and mount the encrypted directory
-cd $storedir
-mkdir -p $storedir/.encfs $storedir/encrypted
-encfs --paranoia $storedir/.encfs $storedir/encrypted 1>/dev/null
+        git init .
+        git touch .gitignore
+        git add .
+        git commit -m 'init'
 
-# make separate datadirs within the encrypted directory
-cd $storedir/encrypted
-mkdir -p ${datadirs[*]}
-cd $storedir/encrypted/profile
-mkdir -p ${profiledirs[*]}
+        cd "$opwd"
+        fusermount -u "$repositoryPath"
+        rmdir "$repositoryPath"
+    done
 
-# git init the store/encrypted/profile/link/bin
-cd $storedir/encrypted/profile/link/bin
-git init . 1>/dev/null
-touch .gitignore
-git add .
-git commit -m 'init' 1>/dev/null
+    exit 0
+}
 
-cd
-mkdir -p $HOME/bin
-mkdir -p $HOME/tmp
-
-echo "tote: Store creation succesful."
-
-exit 0
+main "$@"
