@@ -17,8 +17,8 @@ main () {
     REPOSITORIES_PATH="$(realpath "$TOTE_PATH/repositories")"
 
     local -a filesystems repositories
-    mapfile -rta filesystems <<< tote.filesystems.txt
-    mapfile -rta repositories <<< tote.repositories.txt
+    mapfile -rta filesystems <<< cfg/filesystems.cfg.txt
+    mapfile -rta repositories <<< cfg/repositories.cfg.txt
 
     cd $TOTE_PATH
     mkdir "$FILESYSTEMS_PATH" "$REPOSITORIES_PATH"

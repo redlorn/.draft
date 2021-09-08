@@ -7,7 +7,7 @@ shopt -s extglob
 
 main () {
     local -a HOME_DIRS
-    mapfile -rta HOME_DIRS <<< tote.homedirs.txt
+    mapfile -rta HOME_DIRS <<< cfg/homedirs.cfg.txt
     
     # create and chown/chmod home sub-directories
     for subdir in "${HOME_DIRS[@]}" ; do

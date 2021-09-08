@@ -2,6 +2,10 @@
 .config
 .data
 .storage
+configs
+configs/storage
+data
+data/storage
 documents
 documents/storage
 downloads
@@ -16,8 +20,11 @@ projects
 projects/storage
 public
 repos
+scripts
+scripts/storage
 sounds
 sounds/storage
+templates/storage
 tmp
 videos
 videos/storage
